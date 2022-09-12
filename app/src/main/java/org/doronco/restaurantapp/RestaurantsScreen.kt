@@ -1,9 +1,15 @@
 package org.doronco.restaurantapp
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
@@ -19,25 +25,27 @@ import androidx.compose.ui.unit.dp
 @Preview(showBackground = true)
 @Composable
 fun RestaurantsScreen() {
-    RestaurantItem()
+    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp)) {
+        items(dummyRestaurants){restaurant -> RestaurantItem(item = restaurant)}
+    }
 }
 
 @Composable
-fun RestaurantItem() {
+fun RestaurantItem(item: Restaurant) {
     Card(elevation = 4.dp, modifier = Modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
             RestaurantIcon(Icons.Filled.Place, Modifier.weight(0.15f))
-            RestaurantDetails(Modifier.weight(0.85f))
+            RestaurantDetails(item.title, item.description, Modifier.weight(0.85f))
         }
     }
 }
 
 @Composable
-fun RestaurantDetails(modifier: Modifier) {
+fun RestaurantDetails(title:String, description:String, modifier: Modifier) {
     Column(modifier = modifier) {
-        Text(text = "Chebihi's dishes", style = MaterialTheme.typography.h6)
+        Text(text = title, style = MaterialTheme.typography.h6)
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-            Text(text = "At Chebihi's restaurant ..... seafood dishes.", style = MaterialTheme.typography.body2)
+            Text(text = description, style = MaterialTheme.typography.body2)
         }
     }
 }
