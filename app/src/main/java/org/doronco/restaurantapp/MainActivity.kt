@@ -35,7 +35,7 @@ fun Greeting(name: String) {
     Text(text = "Hello $name!")
 }
 
-@Preview(showBackground = true, device = Devices.NEXUS_9)
+
 @Composable
 fun DefaultPreview() {
     RestaurantAppTheme {
