@@ -26,11 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 
-@Preview(showBackground = true)
 @Composable
 fun RestaurantsScreen() {
     val viewModel: RestaurantsViewModel = viewModel()
-    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp)) {
+    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp) ) {
         items(viewModel.state.value) { restaurant ->
             RestaurantItem(item = restaurant) { id ->
                 viewModel.toggleFavorite(id)
