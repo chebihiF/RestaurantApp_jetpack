@@ -12,7 +12,7 @@ class RestaurantsViewModel() : ViewModel() {
 
     private var restInterface: RestaurantsApiService
     val state = mutableStateOf(emptyList<Restaurant>())
-
+    private lateinit var restaurantsCall: Call<List<Restaurant>>
     init {
         val retrofit: Retrofit = Retrofit.Builder()
             .addConverterFactory(
@@ -25,10 +25,17 @@ class RestaurantsViewModel() : ViewModel() {
         restInterface = retrofit.create(
             RestaurantsApiService::class.java
         )
+        getRestaurants()
     }
 
-    fun getRestaurants(){
-        restInterface.getRestaurants().enqueue(
+    override fun onCleared() {
+        super.onCleared()
+        restaurantsCall.cancel()
+    }
+
+    private fun getRestaurants() {
+        restaurantsCall = restInterface.getRestaurants()
+        restaurantsCall.enqueue(
             object : Callback<List<Restaurant>> {
                 override fun onResponse(
                     call: Call<List<Restaurant>>,
