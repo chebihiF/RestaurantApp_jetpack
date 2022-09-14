@@ -1,6 +1,16 @@
 package org.doronco.restaurantapp
 
-data class Restaurant(val id: Int, val title: String, val description: String, val isFavorite: Boolean = false)
+import com.google.gson.annotations.SerializedName
+
+data class Restaurant(
+    @SerializedName("r_id")
+    val id: Int,
+    @SerializedName("r_title")
+    val title: String,
+    @SerializedName("r_description")
+    val description: String,
+    @SerializedName("is_shutdown")
+    val isFavorite: Boolean = false)
 
 val dummyRestaurants = listOf(
     Restaurant(0, "Alfredo's dishes", "At Alfredo's, we provide the best seafood dishes."),
