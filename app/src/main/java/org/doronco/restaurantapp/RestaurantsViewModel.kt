@@ -2,6 +2,7 @@ package org.doronco.restaurantapp
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,10 +14,10 @@ class RestaurantsViewModel() : ViewModel() {
 
     private var restInterface: RestaurantsApiService
     val state = mutableStateOf(emptyList<Restaurant>())
-    private lateinit var restaurantsCall: Call<List<Restaurant>>
 
-    val job = Job()
-    private val scope = CoroutineScope(job + Dispatchers.IO)
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        exception.printStackTrace()
+    }
 
     init {
         val retrofit: Retrofit = Retrofit.Builder()
@@ -33,17 +34,16 @@ class RestaurantsViewModel() : ViewModel() {
         getRestaurants()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        job.cancel()
+    private suspend fun getRemoteRestaurants() : List<Restaurant> {
+        return withContext(Dispatchers.IO){
+            restInterface.getRestaurants()
+        }
     }
 
     private fun getRestaurants() {
-        scope.launch {
-            val restaurants = restInterface.getRestaurants()
-            withContext(Dispatchers.Main){
-                state.value = restaurants
-            }
+        viewModelScope.launch(errorHandler) {
+            val restaurants = getRemoteRestaurants()
+            state.value = restaurants
         }
     }
 
