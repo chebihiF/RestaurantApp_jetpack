@@ -61,11 +61,17 @@ class RestaurantsViewModel() : ViewModel() {
         }
     }
 
+
+
     fun toggleFavorite(id: Int) {
         val restaurants = state.value.toMutableList()
         val itemIndex = restaurants.indexOfFirst { it.id == id }
         val item = restaurants[itemIndex]
         restaurants[itemIndex] = item.copy(isFavorite = !item.isFavorite)
+        viewModelScope.launch {
+            restaurantsDao.update(restaurants[itemIndex])
+            restInterface.updateRestaurant(itemIndex, restaurants[itemIndex])
+        }
         state.value = restaurants
     }
 }
