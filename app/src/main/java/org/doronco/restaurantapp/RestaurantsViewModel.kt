@@ -4,19 +4,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
+import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.ConnectException
+import java.net.UnknownHostException
 
 class RestaurantsViewModel() : ViewModel() {
 
     private var restInterface: RestaurantsApiService
     val state = mutableStateOf(emptyList<Restaurant>())
+    private var restaurantsDao =
+        RestaurantsDb.getDaoInstance(RestaurantsApplication.getAppContext())
 
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
-        exception.printStackTrace()
+
     }
 
     init {
@@ -34,15 +35,28 @@ class RestaurantsViewModel() : ViewModel() {
         getRestaurants()
     }
 
-    private suspend fun getRemoteRestaurants() : List<Restaurant> {
-        return withContext(Dispatchers.IO){
-            restInterface.getRestaurants()
+    private suspend fun getAllRestaurants(): List<Restaurant> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val restaurants = restInterface.getRestaurants() // fetch data from database "firebase"
+                restaurantsDao.addAll(restaurants) // save data to Sqlite via room
+                return@withContext restaurants
+            }catch (exception: Exception){
+                when (exception) {
+                    is UnknownHostException,
+                    is ConnectException,
+                    is HttpException -> {
+                        return@withContext restaurantsDao.getAll() // fetch data from sqlite via room
+                    }
+                    else -> throw exception
+                }
+            }
         }
     }
 
     private fun getRestaurants() {
         viewModelScope.launch(errorHandler) {
-            val restaurants = getRemoteRestaurants()
+            val restaurants = getAllRestaurants()
             state.value = restaurants
         }
     }
