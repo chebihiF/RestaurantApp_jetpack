@@ -7,6 +7,9 @@ import androidx.room.Query
 
 @Dao
 interface RestaurantsDao {
+    @Query("SELECT * FROM restaurants WHERE r_id=:id")
+    suspend fun getById(id: Int) : Restaurant
+
     @Query("SELECT * FROM restaurants")
     suspend fun getAll() : List<Restaurant>
 
