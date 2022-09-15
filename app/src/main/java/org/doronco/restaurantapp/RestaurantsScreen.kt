@@ -32,7 +32,7 @@ fun RestaurantsScreen() {
     /*LaunchedEffect(key1 = "request_restaurant"){
         viewModel.getRestaurants()
     }*/
-    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp) ) {
+    LazyColumn(contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp)) {
         items(viewModel.state.value) { restaurant ->
             RestaurantItem(item = restaurant) { id ->
                 viewModel.toggleFavorite(id)
@@ -71,8 +71,13 @@ fun RestaurantIcon(icon: ImageVector, modifier: Modifier, onClick: () -> Unit = 
 
 
 @Composable
-fun RestaurantDetails(title: String, description: String, modifier: Modifier) {
-    Column(modifier = modifier) {
+fun RestaurantDetails(
+    title: String,
+    description: String,
+    modifier: Modifier,
+    horizontal: Alignment.Horizontal = Alignment.Start
+) {
+    Column(modifier = modifier, horizontalAlignment = horizontal) {
         Text(text = title, style = MaterialTheme.typography.h6)
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
             Text(text = description, style = MaterialTheme.typography.body2)
