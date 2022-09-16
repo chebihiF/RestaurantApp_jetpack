@@ -16,7 +16,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RestaurantAppTheme {
-                RestaurantsApp()
+                PatientScreen()
+            //RestaurantsApp()
             }
         }
     }
